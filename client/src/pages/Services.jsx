@@ -1,57 +1,67 @@
 // src/pages/Services.jsx
 import { Link } from 'react-router-dom';
-
-const SERVICE_CATEGORIES = [
-  {
-    id: 'electrical',
-    name: 'Electrical',
-    icon: '💡',
-    description:
-      'Wiring, fixtures, power backup, safety inspections and troubleshooting.',
-    badge: 'Popular in apartments',
-  },
-  {
-    id: 'plumbing',
-    name: 'Plumbing',
-    icon: '🚿',
-    description:
-      'Leak repair, pipe fitting, bathroom/kitchen fixtures & drain cleaning.',
-    badge: 'Emergency support',
-  },
-  {
-    id: 'cleaning',
-    name: 'Home Cleaning',
-    icon: '🧹',
-    description: 'Deep cleaning, move-in/move-out, sofa & carpet cleaning.',
-    badge: 'Trusted staff',
-  },
-  {
-    id: 'painting',
-    name: 'Painting',
-    icon: '🎨',
-    description:
-      'Interior & exterior painting, waterproofing, touch-ups & renovations.',
-    badge: 'Free color consult',
-  },
-  {
-    id: 'ac',
-    name: 'AC & Cooling',
-    icon: '❄️',
-    description:
-      'AC service, gas refill, installation, seasonal maintenance & more.',
-    badge: 'Seasonal demand',
-  },
-  {
-    id: 'other',
-    name: 'Others',
-    icon: '🧰',
-    description:
-      'Carpentry, minor repairs, handyman tasks customized to your space.',
-    badge: 'Custom jobs',
-  },
-];
+import { useState, useEffect } from 'react';
+import { getServices } from '../api/services';
 
 function Services() {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadServices = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        const data = await getServices();
+        setServices(data.data || []);
+      } catch (err) {
+        console.error(err);
+        setError(err.message || 'Failed to load services');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadServices();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-50">
+        <div className="mx-auto max-w-6xl px-4 pb-16 pt-10">
+          <div className="flex items-center justify-center py-20">
+            <div className="text-slate-400">Loading services...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-50">
+        <div className="mx-auto max-w-6xl px-4 pb-16 pt-10">
+          <div className="flex items-center justify-center py-20">
+            <div className="text-red-400">Error: {error}</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (services.length === 0) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-50">
+        <div className="mx-auto max-w-6xl px-4 pb-16 pt-10">
+          <div className="flex items-center justify-center py-20">
+            <div className="text-slate-400">No services available at the moment.</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
       <div className="mx-auto max-w-6xl px-4 pb-16 pt-10">
@@ -67,7 +77,7 @@ function Services() {
         </header>
 
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {SERVICE_CATEGORIES.map((service) => (
+          {services.map((service) => (
             <div
               key={service.id}
               className="flex h-full flex-col rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-sm shadow-slate-950/40"
@@ -81,9 +91,11 @@ function Services() {
                     {service.name}
                   </h2>
                 </div>
-                <span className="rounded-full bg-sky-500/15 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-sky-200">
-                  {service.badge}
-                </span>
+                {service.badge && (
+                  <span className="rounded-full bg-sky-500/15 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-sky-200">
+                    {service.badge}
+                  </span>
+                )}
               </div>
 
               <p className="flex-1 text-xs leading-relaxed text-slate-300">
@@ -92,14 +104,21 @@ function Services() {
 
               <div className="mt-4 flex items-center justify-between text-xs">
                 <Link
-                  to={`/book?service=${encodeURIComponent(service.id)}`}
+                  to={`/book?service=${encodeURIComponent(service.category)}`}
                   className="inline-flex items-center rounded-lg bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400"
                 >
                   Book now
                 </Link>
-                <span className="text-[11px] text-slate-400">
-                  Typical response: &lt; 30 mins
-                </span>
+                <div className="text-right">
+                  {service.basePrice && (
+                    <div className="text-[11px] text-slate-400">
+                      From Rs. {service.basePrice}
+                    </div>
+                  )}
+                  <div className="text-[11px] text-slate-500">
+                    {service.duration || 'Variable duration'}
+                  </div>
+                </div>
               </div>
             </div>
           ))}

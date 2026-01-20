@@ -6,10 +6,13 @@ require('dotenv').config();
 const { sequelize, ensureDatabaseExists } = require('./config/database');
 const User = require('./models/User');
 const Booking = require('./models/Booking');
+const Service = require('./models/Service');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
 const { seedAdminUser } = require('./seed/adminUser');
+const { seedServices } = require('./seed/services');
 
 const app = express();
 
@@ -63,6 +66,7 @@ Booking.belongsTo(User, { foreignKey: 'userId' });
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/services', serviceRoutes);
 
 app.use((req, res) => {
   return res.status(404).json({ message: 'Route not found' });
@@ -87,6 +91,7 @@ const startServer = async () => {
     console.log('Models synchronized.');
 
     await seedAdminUser();
+    await seedServices();
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);

@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import UserManagement from './pages/UserManagement';
 import BookingManagement from './pages/BookingManagement';
+import ServiceManagement from './pages/ServiceManagement';
 import Home from './pages/Home';
 import Services from './pages/Services';
 import BookService from "./pages/BookServices";
@@ -65,6 +66,12 @@ function App() {
                   className="text-slate-300 hover:text-cyan-300"
                 >
                   Admin – Bookings
+                </Link>
+                <Link
+                  to="/admin/services"
+                  className="text-slate-300 hover:text-cyan-300"
+                >
+                  Admin – Services
                 </Link>
               </>
             )}
@@ -132,6 +139,14 @@ function App() {
           element={
             <RequireAdmin>
               <BookingManagement />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/services"
+          element={
+            <RequireAdmin>
+              <ServiceManagement />
             </RequireAdmin>
           }
         />
