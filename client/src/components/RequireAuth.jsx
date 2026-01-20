@@ -1,17 +1,16 @@
-// src/components/RequireAdmin.jsx
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-function RequireAdmin({ children }) {
+function RequireAuth({ children }) {
   const location = useLocation();
-  const { isAuthenticated, isAdmin } = useAuth();
+  const { isAuthenticated } = useAuth();
 
-  if (!isAuthenticated || !isAdmin) {
+  if (!isAuthenticated) {
     return (
       <Navigate
         to="/login"
         replace
-        state={{ from: location.pathname || '/admin/users' }}
+        state={{ from: location.pathname || '/dashboard' }}
       />
     );
   }
@@ -19,4 +18,4 @@ function RequireAdmin({ children }) {
   return children;
 }
 
-export default RequireAdmin;
+export default RequireAuth;

@@ -1,30 +1,5 @@
 // src/api/users.js
-import { getAuth } from './auth';
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-
-async function handleResponse(res) {
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    let msg = 'Request failed';
-    if (data.message) msg = data.message;
-    else if (data.error) msg = data.error;
-    else if (Array.isArray(data.errors) && data.errors.length > 0) {
-      msg = data.errors[0].msg || msg;
-    }
-    throw new Error(msg);
-  }
-  return data;
-}
-
-function authHeaders() {
-  const auth = getAuth();
-  if (auth?.token) {
-    return { Authorization: `Bearer ${auth.token}` };
-  }
-  return {};
-}
+import { API_BASE_URL, handleResponse, authHeaders } from './apiClient';
 
 export async function fetchUsers({ page = 1, limit = 20 } = {}) {
   const url = new URL(`${API_BASE_URL}/api/users`);

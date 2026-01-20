@@ -1,12 +1,14 @@
 // src/pages/Login.jsx
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { loginRequest, saveAuth } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
 
 function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const { login } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,8 +25,7 @@ function Login() {
     setError('');
 
     try {
-      const auth = await loginRequest(form); // { token, user }
-      saveAuth(auth);
+      const auth = await login(form); // { token, user }
       const to =
         location.state?.from ||
         (auth?.user?.role === 'admin' ? '/admin/users' : '/dashboard');
