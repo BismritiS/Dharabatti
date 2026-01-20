@@ -33,4 +33,24 @@ function requireRole(...allowedRoles) {
   };
 }
 
-module.exports = { authenticate, requireRole };
+function optionalAuthenticate(req, res, next) {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : null;
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+  } catch (err) {
+    console.warn('Optional JWT verify failed (continuing unauthenticated)');
+  }
+
+  return next();
+}
+
+module.exports = { authenticate, optionalAuthenticate, requireRole };

@@ -2,7 +2,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const userController = require('../controllers/userController');
-const { authenticate, requireRole } = require('../middleware/authMiddleware');
+const { authenticate, optionalAuthenticate, requireRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -39,7 +39,7 @@ const updateUserValidators = [
 
 // Public registration endpoint (no auth)
 // Non-admins cannot create admin (enforced in controller)
-router.post('/', createUserValidators, userController.createUser);
+router.post('/', optionalAuthenticate, createUserValidators, userController.createUser);
 
 // Admin-only management endpoints
 router.get(

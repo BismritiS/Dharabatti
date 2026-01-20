@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Services from './pages/Services';
 import BookService from "./pages/BookServices";
 import CustomerDashboard from './pages/CustomerDashboard';
+import ForgotPassword from './pages/ForgotPassword';
 import RequireAdmin from './components/RequireAdmin';
 import { getAuth, clearAuth } from './api/auth';
 
@@ -101,6 +102,7 @@ function App() {
           <Route path="/book" element={<BookService />} />
           <Route path="/dashboard" element={<CustomerDashboard />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register" element={<Register />} />
           <Route
             path="/admin/users"

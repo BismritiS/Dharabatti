@@ -10,7 +10,7 @@ function Login() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from || '/admin/users';
+  const successMessage = location.state?.message || '';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,7 +25,10 @@ function Login() {
     try {
       const auth = await loginRequest(form); // { token, user }
       saveAuth(auth);
-      navigate(from, { replace: true });
+      const to =
+        location.state?.from ||
+        (auth?.user?.role === 'admin' ? '/admin/users' : '/dashboard');
+      navigate(to, { replace: true });
     } catch (err) {
       console.error(err);
       setError(err.message || 'Login failed');
@@ -41,6 +44,12 @@ function Login() {
           <h1 className="login-title">Welcome Back</h1>
           <p className="login-subtitle">Sign in to access your dashboard</p>
         </div>
+
+        {successMessage && (
+          <div className="mb-6 rounded-lg bg-emerald-500/10 border border-emerald-500/30 px-4 py-3 text-sm text-emerald-200 flex items-center">
+            {successMessage}
+          </div>
+        )}
 
         {error && (
           <div className="mb-6 rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-200 flex items-center">
