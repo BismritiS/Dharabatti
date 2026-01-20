@@ -116,28 +116,36 @@ function UserManagement() {
     });
   };
 
-  const handleDelete = async (user) => {
-    if (!window.confirm(`Deactivate user "${user.fullName}"?`)) return;
+  const handleToggleStatus = async (user) => {
+    const action = user.isActive ? 'deactivate' : 'activate';
+    if (!window.confirm(`${action === 'deactivate' ? 'Deactivate' : 'Activate'} user "${user.fullName}"?`)) return;
 
     setError('');
     setSuccess('');
 
     try {
-      await deleteUser(user.id);
+      if (user.isActive) {
+        // Deactivate user
+        await deleteUser(user.id);
+        setSuccess('User deactivated successfully.');
+      } else {
+        // Activate user
+        await updateUser(user.id, { isActive: true });
+        setSuccess('User activated successfully.');
+      }
 
       // Optimistically update local state so UI changes immediately
       setUsers((prev) =>
         prev.map((u) =>
-          u.id === user.id ? { ...u, isActive: false } : u
+          u.id === user.id ? { ...u, isActive: !u.isActive } : u
         )
       );
 
-      setSuccess('User deactivated successfully.');
-      // Optional: also re-fetch from server
+      // Re-fetch from server to ensure consistency
       await loadUsers(page);
     } catch (err) {
       console.error(err);
-      setError(err.message || 'Failed to delete user');
+      setError(err.message || `Failed to ${action} user`);
     }
   };
   
@@ -361,10 +369,14 @@ function UserManagement() {
                             Edit
                           </button>
                           <button
-                            onClick={() => handleDelete(user)}
-                            className="rounded border border-red-300 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
+                            onClick={() => handleToggleStatus(user)}
+                            className={`rounded border px-2 py-1 text-xs hover:bg-opacity-10 ${
+                              user.isActive
+                                ? 'border-red-300 text-red-600 hover:bg-red-50'
+                                : 'border-emerald-300 text-emerald-600 hover:bg-emerald-50'
+                            }`}
                           >
-                            Deactivate
+                            {user.isActive ? 'Deactivate' : 'Activate'}
                           </button>
                         </div>
                       </td>

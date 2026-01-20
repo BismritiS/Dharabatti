@@ -3,6 +3,7 @@ import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import UserManagement from './pages/UserManagement';
+import BookingManagement from './pages/BookingManagement';
 import Home from './pages/Home';
 import Services from './pages/Services';
 import BookService from "./pages/BookServices";
@@ -52,12 +53,20 @@ function App() {
               Dashboard
             </Link>
             {isAdmin && (
-              <Link
-                to="/admin/users"
-                className="text-slate-300 hover:text-cyan-300"
-              >
-                Admin – Users
-              </Link>
+              <>
+                <Link
+                  to="/admin/users"
+                  className="text-slate-300 hover:text-cyan-300"
+                >
+                  Admin – Users
+                </Link>
+                <Link
+                  to="/admin/bookings"
+                  className="text-slate-300 hover:text-cyan-300"
+                >
+                  Admin – Bookings
+                </Link>
+              </>
             )}
           </div>
 
@@ -115,6 +124,14 @@ function App() {
           element={
             <RequireAdmin>
               <UserManagement />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/bookings"
+          element={
+            <RequireAdmin>
+              <BookingManagement />
             </RequireAdmin>
           }
         />

@@ -28,3 +28,13 @@ export async function getMyBookings({ signal } = {}) {
   });
   return handleResponse(res);
 }
+
+export async function getAllBookings({ signal } = {}) {
+  const res = await fetch(`${API_BASE_URL}/api/bookings`, {
+    headers: {
+      ...authHeaders(),
+    },
+    signal,
+  });
+  return handleResponse(res);
+}
